@@ -12,6 +12,9 @@
 
 static int s2d_width(const char *str, int line, int len);
 
+extern u32 s2d_colorstack[100];
+extern u32 s2d_colorstack_top;
+
 enum S2DPrintModes {
 	MODE_DRAW_DROPSHADOW,
 	MODE_DRAW_NORMALTEXT,
@@ -34,9 +37,17 @@ static int s2d_snprint(int x, int y, int align, const char *str, uObjMtx *buf, i
 	}
 
 	// resets parameters
-	s2d_red = s2d_green = s2d_blue = 255;
-	s2d_alpha = 255;
-	drop_shadow = FALSE;
+	u32 init_c = s2d_colorstack[98];
+				s2d_red = (init_c >> 24) & 0xFF;
+				s2d_green = (init_c >> 16) & 0xFF;
+				s2d_blue = (init_c >> 8) & 0xFF;
+				s2d_alpha = (init_c) & 0xFF;
+
+	u32 tempc;
+	// drop_shadow = FALSE;
+	extern u32 subStackPtr;
+	subStackPtr = 0;
+	int ud_mode = 0;
 
 	switch (align) {
 		case ALIGN_CENTER:
@@ -162,6 +173,25 @@ static int s2d_snprint(int x, int y, int align, const char *str, uObjMtx *buf, i
 				myScale = 1;
 				myDegrees = 0;
 				break;
+			case CH_COLORSTACK:
+				tempc = s2d_colorstack[subStackPtr++];
+				s2d_red = (tempc >> 24) & 0xFF;
+				s2d_green = (tempc >> 16) & 0xFF;
+				s2d_blue = (tempc >> 8) & 0xFF;
+				s2d_alpha = (tempc) & 0xFF;
+				break;
+			case CH_COLORSTACK_UD:
+				if (ud_mode == 0) {
+					tempc = s2d_colorstack[subStackPtr] ^ 0xFFFFFF00;
+				} else {
+					tempc = s2d_colorstack[subStackPtr];
+				}
+				s2d_red = (tempc >> 24) & 0xFF;
+				s2d_green = (tempc >> 16) & 0xFF;
+				s2d_blue = (tempc >> 8) & 0xFF;
+				s2d_alpha = (tempc) & 0xFF;
+				ud_mode ^= 1;
+				break;
 			default:
 				if (current_char != '\0' && current_char != CH_SEPARATOR) {
 					char *tbl = segmented_to_virtual(s2d_kerning_table);
@@ -180,14 +210,14 @@ static int s2d_snprint(int x, int y, int align, const char *str, uObjMtx *buf, i
 						}
 					}
 
-					(x += (tbl[(int) current_char] * (BASE_SCALE * myScale)));
+					(x += (tbl[(int) current_char] * (myScale)));
 				}
 		}
 		if (*p == '\0') break;
 		p++;
 		tmp_len++;
 	} while (tmp_len < len);
-	myScale = 1.0f;
+	myScale = BASE_SCALE;
 	myDegrees = 0;
 	drop_shadow = FALSE;
 	drop_x = 0;
@@ -207,11 +237,18 @@ static int s2d_string_has_dropshadow(const char *str) {
 
 // deprecated
 void s2d_print(int x, int y, int align, const char *str, uObjMtx *buf) {
-	if (s2d_check_align(align) != 0) return;
-	if (s2d_check_str(str)     != 0) return;
+	// if (s2d_check_align(align) != 0) return;
+	// if (s2d_check_str(str)     != 0) return;
 
-	s2d_snprint(x, y, align, str, buf, s2d_strlen(str), MODE_DRAW_DROPSHADOW);
-	s2d_snprint(x, y, align, str, buf, s2d_strlen(str), MODE_DRAW_NORMALTEXT);
+	// s2d_snprint(x, y, align, str, buf, s2d_strlen(str), MODE_DRAW_DROPSHADOW, color);
+	// s2d_snprint(x, y, align, str, buf, s2d_strlen(str), MODE_DRAW_NORMALTEXT, color);
+}
+
+void s2d_setbasecolor(u32 color) {
+	s2d_red = (color >> 24) & 0xFF;
+	s2d_green = (color >> 16) & 0xFF;
+	s2d_blue = (color >> 8) & 0xFF;
+	s2d_alpha = (color) & 0xFF;
 }
 
 void s2d_print_alloc(int x, int y, int align, const char *str) {
@@ -221,6 +258,8 @@ void s2d_print_alloc(int x, int y, int align, const char *str) {
 	if (s2d_check_str(str)     != 0) return;
 
 	len = s2d_strlen(str);
+
+	// s2d_setbasecolor(color);
 
 	if (s2d_string_has_dropshadow(str)) {
 		uObjMtx *b = alloc(sizeof(uObjMtx) * len);
@@ -233,53 +272,52 @@ void s2d_print_alloc(int x, int y, int align, const char *str) {
 
 // deprecated
 void s2d_type_print(int x, int y, int align, const char *str, uObjMtx *buf, int *pos) {
-	int len;
+	// int len;
 
-	if (s2d_check_align(align) != 0) return;
-	if (s2d_check_str(str)     != 0) return;
+	// if (s2d_check_align(align) != 0) return;
+	// if (s2d_check_str(str)     != 0) return;
 	
-	len = s2d_strlen(str);
+	// len = s2d_strlen(str);
 
-	s2d_snprint(x, y, align, str, buf, *pos, MODE_DRAW_DROPSHADOW);
+	// s2d_snprint(x, y, align, str, buf, *pos, MODE_DRAW_DROPSHADOW);
 
-	int result = s2d_snprint(x, y, align, str, buf, *pos, MODE_DRAW_NORMALTEXT);
-	if (s2d_timer % 2 == 0) {
-		if (*pos < len && result != 1) {
-			(*pos)++;
-		}
-	}
+	// int result = s2d_snprint(x, y, align, str, buf, *pos, MODE_DRAW_NORMALTEXT);
+	// if (s2d_timer % 2 == 0) {
+	// 	if (*pos < len && result != 1) {
+	// 		(*pos)++;
+	// 	}
+	// }
 }
 
 void s2d_type_print_alloc(int x, int y, int align, const char *str, int *pos) {
-	int len;
+	// int len;
 
-	if (s2d_check_align(align) != 0) return;
-	if (s2d_check_str(str)     != 0) return;
+	// if (s2d_check_align(align) != 0) return;
+	// if (s2d_check_str(str)     != 0) return;
 
-	len = s2d_strlen(str);
+	// len = s2d_strlen(str);
 
-	uObjMtx *b = alloc(sizeof(uObjMtx) * (*pos));
+	// uObjMtx *b = alloc(sizeof(uObjMtx) * (*pos));
 
-	if (s2d_string_has_dropshadow(str)) {
-		uObjMtx *b_d = alloc(sizeof(uObjMtx) * (*pos));
-		s2d_snprint(x, y, align, str, b_d, *pos, MODE_DRAW_DROPSHADOW);
-	}
+	// if (s2d_string_has_dropshadow(str)) {
+	// 	uObjMtx *b_d = alloc(sizeof(uObjMtx) * (*pos));
+	// 	s2d_snprint(x, y, align, str, b_d, *pos, MODE_DRAW_DROPSHADOW);
+	// }
 
-	int result = s2d_snprint(x, y, align, str, b, *pos, MODE_DRAW_NORMALTEXT);
-	if (s2d_timer % 2 == 0) {
-		if (*pos < len && result != 1) {
-			(*pos)++;
-		}
-	}
+	// int result = s2d_snprint(x, y, align, str, b, *pos, MODE_DRAW_NORMALTEXT);
+	// if (s2d_timer % 2 == 0) {
+	// 	if (*pos < len && result != 1) {
+	// 		(*pos)++;
+	// 	}
+	// }
 }
 
-// broken atm
-static int s2d_width(const char *str, int line, int len) {
+int s2d_width(const char *str, int line, int len) {
 	char *p = str;
 	int tmp_len = 0;
 	int curLine = 0;
 	int width = 0;
-	int scale = 1;
+	f32 scale = BASE_SCALE;
 
 	if (*p == '\0') return width;
 
@@ -288,11 +326,14 @@ static int s2d_width(const char *str, int line, int len) {
 		switch (current_char) {
 			case CH_SCALE:
 				CH_SKIP(p);
-				scale = s2d_atoi(p, &p);
+				scale = (f32)s2d_atoi(p, &p) / 100.0f;
 				break;
 			case CH_ROT:
 				CH_SKIP(p);
 				s2d_atoi(p, &p);
+				break;
+			case CH_COLORSTACK:
+				CH_SKIP(p);
 				break;
 			case CH_TRANSLATE:
 				CH_SKIP(p);
@@ -327,13 +368,72 @@ static int s2d_width(const char *str, int line, int len) {
 					width += TAB_WIDTH_V / TEX_RES;
 				break;
 			default:
-				if (current_char != '\0' && curLine == line)
-					width += s2d_kerning_table[(int) current_char] * scale;
+				if (current_char != '\0' && curLine == line) {
+					vu8 *tbl = segmented_to_virtual(s2d_kerning_table);
+					width += tbl[(int) current_char] * scale;
+				}
 		}
 		if (*p == '\0') break;
 		p++;
 		tmp_len++;
 	} while (tmp_len < len && curLine <= line);
+	return width;
+}
+
+int s2d_snwidth(const char *str, int strl) {
+	char *p = str;
+	int tmp_len = 0;
+	int curLine = 0;
+	int width = 0;
+	f32 scale = BASE_SCALE;
+
+	if (*p == '\0') return width;
+
+	do {
+		char current_char = *p;
+		switch (current_char) {
+			case CH_SCALE:
+				CH_SKIP(p);
+				scale = (f32)s2d_atoi(p, &p) / 100.0f;
+				break;
+			case CH_ROT:
+				CH_SKIP(p);
+				s2d_atoi(p, &p);
+				break;
+			case CH_COLORSTACK:
+				CH_SKIP(p);
+				break;
+			case CH_TRANSLATE:
+				CH_SKIP(p);
+				s2d_atoi(p, &p);
+				curLine++;
+				CH_SKIP(p);
+				CH_SKIP(p);
+				s2d_atoi(p, &p);
+				break;
+			case CH_COLOR:
+				CH_SKIP(p);
+				s2d_atoi(p, &p);
+				CH_SKIP(p); CH_SKIP(p);
+				s2d_atoi(p, &p);
+				CH_SKIP(p); CH_SKIP(p);
+				s2d_atoi(p, &p);
+				CH_SKIP(p); CH_SKIP(p);
+				s2d_atoi(p, &p);
+				break;
+			case CH_DROPSHADOW:
+			case CH_RESET:
+				break;
+			default:
+				if (current_char != '\0') {
+					vu8 *tbl = segmented_to_virtual(s2d_kerning_table);
+					width += tbl[(int) current_char] * scale;
+				}
+		}
+		if (*p == '\0') break;
+		p++;
+		tmp_len++;
+	} while (tmp_len < strl);
 	return width;
 }
 

@@ -7,7 +7,7 @@
  * SET YOUR FONT NAME HERE
  */
 #ifndef FONTNAME
-    #define FONTNAME impact
+    #define FONTNAME newsm64
 #endif
 
 
@@ -15,7 +15,7 @@
  * Helpful defines to change
  ***********/
 
-#define BASE_SCALE 1.0f
+#define BASE_SCALE 0.25f
 
 /******************************
  *
@@ -31,7 +31,7 @@
 #define STR2(x) STR(x)
 
 #define __headername(hd) fonts/hd.h
-#define __fontinclude(f) src/s2d_engine/fonts/f.c
+#define __fontinclude(f) src/s2dex_text_engine/fonts/f.c
 
 #define _FONT_HEADER STR2(__headername(FONTNAME))
 #define FONT_C_FILE STR2(__fontinclude(FONTNAME))

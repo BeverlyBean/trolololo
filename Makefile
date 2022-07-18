@@ -121,7 +121,7 @@ endif
 
 # TEXT ENGINES
 #   s2dex_text_engine - Text Engine by someone2639
-TEXT_ENGINE := none
+TEXT_ENGINE := s2dex_text_engine
 $(eval $(call validate-option,TEXT_ENGINE,none s2dex_text_engine))
 
 #==============================================================================#
@@ -559,7 +559,7 @@ all: $(ROM)
 
 clean:
 	$(RM) -r $(BUILD_DIR_BASE)
-	make -C src/s2d_engine clean
+	make -C src/s2dex_text_engine clean
 
 distclean: clean
 	$(PYTHON) extract_assets.py --clean

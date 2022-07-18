@@ -10,6 +10,8 @@
 #define SEPARATOR  "\x86"
 #define RESET      "\x87"
 #define BUTTON     "\x88"
+#define COLORSTACK "\x89"
+#define COLORSTACK_UD "\x8A"
 
 #define CH_SCALE      '\x80'
 #define CH_ROT        '\x81'
@@ -20,6 +22,8 @@
 #define CH_SEPARATOR  '\x86'
 #define CH_RESET      '\x87'
 #define CH_BUTTON     '\x88'
+#define CH_COLORSTACK '\x89'
+#define CH_COLORSTACK_UD '\x8A'
 
 // ASCII standard escape codes
 #define CH_NEWLINE   '\n'
