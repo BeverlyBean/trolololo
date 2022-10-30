@@ -233,6 +233,21 @@ SECTIONS
       */ULTRALIB.a:*.o(COMMON);
       */ULTRALIB.a:*.o(.scommon);
       */ULTRALIB.a:*.o(.*bss*);
+       BUILD_DIR/src/audio*.o(.*bss*);
+ #ifdef S2DEX_TEXT_ENGINE
+       lib/libs2d_engine.a:*(.*bss*);
+       lib/libs2d_engine.a:*(COMMON);
+       lib/libs2d_engine.a:*(.scommon);
+ #endif
+ #if defined(ISVPRINT) || defined(UNF)
+       */libultra_d.a:*.o(COMMON);
+      */libultra_d.a:*.o(.scommon);
+      */libultra_d.a:*.o(.*bss*);
+#else
+      */libultra_rom.a:*.o(COMMON);
+      */libultra_rom.a:*.o(.scommon);
+      */libultra_rom.a:*.o(.*bss*);
+#endif
       */libhvqm2.a:*.o(.bss*);
       */librtc.a:*.o(.bss*);
       */libz.a:*.o(.bss*);
