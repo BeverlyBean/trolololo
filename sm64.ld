@@ -164,6 +164,9 @@ SECTIONS
       KEEP(BUILD_DIR/asm/text/test.o(.newtext));
       KEEP(BUILD_DIR/asm/text/test.o(.rodata));
 
+      KEEP(BUILD_DIR/asm/text/test.o(.newtext));
+      KEEP(BUILD_DIR/asm/text/test.o(.rodata));
+
       BUILD_DIR/src/boot*.o(.text*);
       BUILD_DIR/src/hvqm*.o(.text*);
       BUILD_DIR/src/usb*.o(.text*);
