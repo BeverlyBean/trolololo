@@ -21,7 +21,7 @@
 /**
  * Spawns floombas on the title screen.
  */
-#define INTRO_FLOOMBAS
+//#define INTRO_FLOOMBAS
 
 /**
  * Enables widescreen (16:9) support.
@@ -104,7 +104,7 @@
  * Uses the star object's model in the star dance cutscene.
  * This has a side effect of making the star dance star also transparent when Mario collects a transparent star.
  */
-// #define STAR_DANCE_USES_STARS_MODEL
+#define STAR_DANCE_USES_STARS_MODEL
 
 /**
  * Lightweight directional lighting engine by Fazana. Intended for giving proximity and positional pointlights to small objects.
@@ -117,7 +117,7 @@
  * It is sideways in vanilla, and since vanilla's environment map textures are sideways too, those will appear as sideways in-game if this is enabled.
  * Make sure your custom environment map textures are the correct orientation.
  */
-// #define FIX_REFLECT_MTX
+#define FIX_REFLECT_MTX
 
 /**
  * Disables all object shadows. You'll probably only want this either as a last resort for performance or if you're making a super stylized hack.
