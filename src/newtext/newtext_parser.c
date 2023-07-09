@@ -495,11 +495,12 @@ int NewText_Parse(u8 *scene) {
         case NT_GO:
             NewText_Cursor = *(u32*)(NewText_Cursor + 4);
             break;
-        case NT_TURING:
+        case NT_TURING: {
             u32 fp = *(u32*)(NewText_Cursor + 4);
             if (((int (*)())fp)());
             proceed = 1;
             break;
+        }
         case NT_SOUND:
             play_sound(*(u32 *)(NewText_Cursor + 4), gGlobalSoundSource);
             proceed = 1;

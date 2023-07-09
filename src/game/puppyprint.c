@@ -418,10 +418,6 @@ void ntprint_proto(int x, int y, char *text) {
     print_small_text(x, y, text, PRINT_TEXT_ALIGN_CENTRE, PRINT_ALL, FONT_DEFAULT);
 }
 
-void ntprint_proto(int x, int y, char *text) {
-    print_small_text(x, y, text, PRINT_TEXT_ALIGN_CENTRE, PRINT_ALL, FONT_DEFAULT);
-}
-
 char consoleLogTable[LOG_BUFFER_SIZE][255];
 
 static char *write_to_buf(char *buffer, const char *data, size_t size) {

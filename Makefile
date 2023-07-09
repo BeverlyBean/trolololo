@@ -352,7 +352,7 @@ ACTOR_DIR      := actors
 LEVEL_DIRS     := $(patsubst levels/%,%,$(dir $(wildcard levels/*/header.h)))
 
 # Directories containing source files
-SRC_DIRS += src/newtext asm/text src src/boot src/game src/engine src/audio src/menu src/buffers actors levels bin data assets asm lib sound
+SRC_DIRS += src src/newtext asm/text src/boot src/game src/engine src/audio src/menu src/buffers actors levels bin data assets asm lib sound
 LIBZ_SRC_DIRS := src/libz
 GODDARD_SRC_DIRS := src/goddard src/goddard/dynlists
 BIN_DIRS := bin bin/$(VERSION)
@@ -419,7 +419,7 @@ LIBRARIES := nustd hvqm2 z goddard
 ifeq ($(TEXT_ENGINE), s2dex_text_engine)
   DEFINES += S2DEX_GBI_2=1 S2DEX_TEXT_ENGINE=1
   LIBRARIES += s2d_engine
-  DUMMY != $(MAKE) -C src/s2d_engine COPY_DIR=$(shell pwd)/lib/ CROSS=$(CROSS)
+  DUMMY != $(MAKE) -C src/s2dex_text_engine COPY_DIR=$(shell pwd)/lib/ CROSS=$(CROSS)
 endif
 # add more text engines here
 
@@ -514,7 +514,7 @@ else
   RSPASM              := $(TOOLS_DIR)/armips
 endif
 ENDIAN_BITWIDTH       := $(BUILD_DIR)/endian-and-bitwidth
-EMULATOR = ~/Devel/m64p/mupen64plus/mupen64plus-gui
+EMULATOR = mupen64plus
 EMU_FLAGS =
 
 ifneq (,$(call find-command,wslview))
